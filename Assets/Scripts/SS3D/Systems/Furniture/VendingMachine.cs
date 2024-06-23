@@ -3,6 +3,7 @@ using SS3D.Core;
 using SS3D.Data.Generated;
 using SS3D.Interactions;
 using SS3D.Interactions.Interfaces;
+using SS3D.Logging;
 using SS3D.Systems.Audio;
 using SS3D.Systems.Inventory.Items;
 using UnityEngine;
@@ -46,7 +47,14 @@ namespace SS3D.Systems.Furniture
         {
             if (productIndex >= _productsToDispense.Length)
             {
-                Debug.LogError($"Product with index {productIndex} not found in products to dispense in {gameObject.name}. Max possible index is {_productsToDispense.Length - 1}");
+                Log.Error(this, $"Product with index {productIndex} not found in products to dispense in {gameObject.name}. "
+                    + $"Max possible index is {_productsToDispense.Length - 1}");
+                return;
+            }
+            
+            if (productIndex < 0)
+            {
+                Log.Error(this, $"Invalid product index, value must be between 0 and {_productsToDispense.Length - 1}");
                 return;
             }
 
