@@ -1,4 +1,6 @@
 ﻿using FishNet.Object.Synchronizing;
+using SS3D.Core;
+using SS3D.Systems.Furniture;
 using SS3D.Systems.Tile.Connections;
 using UnityEngine;
 namespace System.Electricity
@@ -11,21 +13,14 @@ namespace System.Electricity
         private float _powerConsumptionInUse = 1f;
 
         public bool isIdle = true;
-
         private bool _machineUsedOnce;
 
         [SyncVar(OnChange = nameof(SyncPowerStatus))]
         private PowerStatus _powerStatus;
         public float PowerNeeded 
         {
-            get 
+            get
             {
-                if (_machineUsedOnce)
-                {
-                    _machineUsedOnce = false;
-                    return _powerConsumptionInUse;
-                }
-                
                 return isIdle ? _powerConsumptionIdle : _powerConsumptionInUse;
             }
         }
@@ -40,7 +35,15 @@ namespace System.Electricity
 
         public void UseMachineOnce()
         {
+            isIdle = false;
             _machineUsedOnce = true;
+            Subsystems.Get<ElectricitySystem>().OnTick += HandleMachineWasUsed;
+        }
+        
+        private void HandleMachineWasUsed()
+        {
+            _machineUsedOnce = false;
+            Subsystems.Get<ElectricitySystem>().OnTick -= HandleMachineWasUsed;
         }
     }
 }
