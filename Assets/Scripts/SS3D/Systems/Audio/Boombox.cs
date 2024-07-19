@@ -21,7 +21,7 @@ namespace SS3D.Systems.Audio
         private List<AudioClip> _songs;
 
         [SyncVar]
-        public bool RadioOn;
+        public bool AudioOn;
 
         [SyncVar]
         public int CurrentMusic;
@@ -32,7 +32,7 @@ namespace SS3D.Systems.Audio
 
         public bool GetState()
         {
-            return RadioOn;
+            return AudioOn;
         }
         
         protected override void OnEnabled()
@@ -49,10 +49,10 @@ namespace SS3D.Systems.Audio
                 return;
             }
             
-            RadioOn = !RadioOn;
-            _powerConsumer.isIdle = !RadioOn;
+            AudioOn = !AudioOn;
+            _powerConsumer.isIdle = !AudioOn;
             
-            if (RadioOn)
+            if (AudioOn)
             {
                 Subsystems.Get<AudioSystem>().PlayAudioSource(AudioType.Music, _songs[CurrentMusic], GameObject.transform.position, NetworkObject,
                     false, 0.7f, 1, 1, 5);
@@ -70,16 +70,16 @@ namespace SS3D.Systems.Audio
 
         private void UpdateMusic(PowerStatus powerStatus)
         {
-            if (RadioOn && powerStatus != PowerStatus.Powered)
+            if (AudioOn && powerStatus != PowerStatus.Powered)
             {
-                RadioOn = false;
+                AudioOn = false;
                 Subsystems.Get<AudioSystem>().StopAudioSource(NetworkObject);
             }
         }
 
         public void ChangeCurrentMusic()
         {
-            if (!RadioOn)
+            if (!AudioOn)
             {
                 return;
             }
